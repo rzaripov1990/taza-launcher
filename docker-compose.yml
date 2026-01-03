@@ -70,9 +70,9 @@ services:
       - tracker-network
 
   # Vue.js фронтенд приложение pw-tracker
-  taza-launcher:
-    image: rzaripov1990/pw-tracker:main
-    container_name: tracker-frontend
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     restart: always
     depends_on:
       - issue-tracker
