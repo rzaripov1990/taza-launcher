@@ -70,9 +70,9 @@ services:
       - tracker-network
 
   # Vue.js фронтенд приложение pw-tracker
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
+  pw-tracker:
+    image: rzaripov1990/pw-tracker:main
+    container_name: pw-tracker
     restart: always
     depends_on:
       - issue-tracker
