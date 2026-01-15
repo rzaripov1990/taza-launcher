@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  # PostgreSQL база данных для issue-tracker
+  # PostgreSQL база данных для taza-server
   postgres:
     image: postgres:16-alpine
     container_name: tracker-postgres
@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Jaeger для трассировки issue-tracker
+  # Jaeger для трассировки taza-server
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: tracker-jaeger
@@ -36,9 +36,9 @@ services:
     networks:
       - tracker-network
 
-  # Go backend приложение issue-tracker
-  issue-tracker:
-    image: rzaripov1990/issue-tracker:main
+  # Go backend приложение taza-server
+  taza-server:
+    image: rzaripov1990/taza-server:main
     container_name: tracker-backend
     restart: always
     depends_on:
@@ -56,26 +56,30 @@ services:
       DB_LOG_LEVEL: "ERROR"
       # OpenTelemetry
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4318"
-      OTEL_SERVICE_NAME: "issue-tracker"
+      OTEL_SERVICE_NAME: "taza-server"
       OTEL_SERVICE_VERSION: "1.0.0"
       OTEL_EXPORTER_OTLP_INSECURE: "true"
       # Приложение
-      APP_NAME: "issue-tracker"
+      APP_NAME: "taza-server"
       APP_VERSION: "1.0.0"
       # CORS - разрешаем запросы от фронтенда
       CORS_ORIGINS: "*"
+      # Аутентификация - OAuth 2.0
+      AUTH_JWT_SECRET: "K8x9mP2qR5vL7wN3tY6uI1oA4sD0fG8hJ9kL2mN5pQ8rT1vW4xY7zA"
+      AUTH_JWT_EXPIRATION: "24h"
+      AUTH_ENCRYPTION_KEY: "M3nP6qS9vX2zA5cF8hK1mN4rT7wY0bE3"
     ports:
       - "8080:8080"
     networks:
       - tracker-network
 
-  # Vue.js фронтенд приложение pw-tracker
-  pw-tracker:
-    image: rzaripov1990/pw-tracker:main
-    container_name: pw-tracker
+  # Vue.js фронтенд приложение taza-flow
+  taza-flow:
+    image: rzaripov1990/taza-flow:main
+    container_name: taza-flow
     restart: always
     depends_on:
-      - issue-tracker
+      - taza-server
     ports:
       - "80:80"
     networks:
